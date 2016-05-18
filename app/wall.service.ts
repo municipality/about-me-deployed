@@ -1,10 +1,13 @@
-import {Injectable} from 'angular2/core';
+import {Injectable, Inject} from 'angular2/core';
+import {Http, Headers} from 'angular2/http';
+import 'rxjs/Rx'; // use for "map" function
 
 @Injectable()
 export class WallService {
     //used to build the squares table
     numColumns : number = 3;
     builder : any[][] = [];
+
     /*
     Squares
         title : title of square
@@ -76,7 +79,8 @@ export class WallService {
         }
     ];
 
-    constructor () {
+    constructor (public http:Http) {
+
         for (let i = 0; i < this.squares.length; i++) {
             //For every numColumns squares, construct a new row
             if (i%this.numColumns == 0) {
@@ -92,5 +96,17 @@ export class WallService {
 
     getSquaresTable () {
         return this.builder;
+    }
+
+    callApi (url:string) {
+        var headers = new Headers();
+        headers.append('Authorization', "");
+        return this.http.get(url, {
+            headers : headers
+        }).map( (res) => {
+            res = res.json();
+            console.log(`Response from ${url}!`);
+            return res;
+        });
     }
 }
